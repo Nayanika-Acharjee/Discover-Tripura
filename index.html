@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover Tripura</title>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- SWIPER CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+   body {
+background: url('https://s7ap1.scene7.com/is/image/incredibleindia/rock-cut-heritage-unakoti-2-attr-hero?qlt=82&ts=1751459946526') center/cover fixed;
+background-size: cover;
+color: #111111;
+overflow-x: hidden;
+transition: 0.4s;
+position: relative;
+}
+
+
+/* Overlay to create low opacity effect */
+body::before {
+content: '';
+position: fixed;
+top: 0; left: 0;
+width: 100%; height: 100%;
+background: rgba(255, 255, 255, 0.623); /* adjust for opacity */
+pointer-events: none;
+z-index: -1;
+}
+    /* DARK MODE */
+    body.dark { background: #0f0f0f; color: #eee; }
+    body.dark .card { background: #1a1a1a; }
+    body.dark .navbar { background: rgba(20,20,20,0.6); }
+    body.dark footer { background: #000; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 15px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.3);
+      z-index: 10;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      transition: 0.4s;
+    }
+
+    .navbar ul { display: flex; gap: 25px; list-style: none; }
+    .navbar a { text-decoration: none; color: #000; font-weight: 500; }
+    body.dark .navbar a { color: #fff; }
+
+    /* DARK MODE BUTTON */
+    .dark-toggle {
+      padding: 8px 18px;
+      background: #00a86b;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* HERO */
+    .hero {
+      height: 100vh;
+      background: url('https://tripuratourism.gov.in/images/tour/1661759345/80.jpg') center/cover fixed;
+      display: flex;
+      align-items: center;
+      padding-left: 5%;
+      color: white;
+      position: relative;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 600px; }
+    .explore-btn {
+      margin-top: 20px;
+      padding: 12px 25px;
+      background: #00a86b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .section-title { text-align: center; font-size: 2.8rem; margin: 80px 0 20px; }
+
+    /* SWIPER */
+    .swiper {
+      width: 90%;
+      height:550px;
+      margin: auto;
+    }
+
+    .swiper-slide {
+      background-position: center;
+      background-size: cover;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    }
+
+    /* SCROLL TO TOP */
+    #topBtn {
+      position: fixed;
+      bottom: 25px; right: 25px;
+      padding: 12px 20px;
+      background: #00a86b;
+      color: white;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+
+    footer {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 40px 0;
+      margin-top: 60px;
+    }
+
+    .attraction-card{transition:transform 0.4s ease;} .attraction-card.zoomed{transform:scale(1.20); z-index:5; position:relative;border-radius: 50%;} 
+
+.section-title {
+color: #0d522cad; 
+font-weight: bold;
+font-size: 80px;;
+font-family: 'Amazon BT', serif;
+}
+
+.p{
+color: #0d522cad;
+text-align: center;
+font-weight: bold;
+font-family:serif;
+}
+.text{
+    text-align:center; width:80%; margin:auto; font-size:1.2rem; opacity:0.8;
+    color:#011a01d7;
+    font-family:serif;
+}
+.h3{
+    text-align: center;
+}
+
+ .explore-wrap {
+    overflow-x: auto;      /* keep horizontal scrolling */
+    overflow-y: visible !important; /* allow upward move */
+  }
+
+  /* base card style (ensure no other transform interfering) */
+  .explore-card {
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    
+    position: relative;       /* so z-index works when lifted */
+    z-index: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ONLY upward movement — no scaling */
+  .explore-card.upward {
+    transform: translateY(-30px) !important; /* move up */
+    z-index: 9999 !important;                 /* float above others */
+    box-shadow: 0 18px 34px rgba(0,0,0,0.25);
+  }
+
+  /* ensure the inner Explore button doesn't bubble the click (optional visual) */
+  .explore-card button {
+    pointer-events: auto;
+  }
+
+
+  </style>
+</head>
+<body>
+
+  <div id="preloader">Loading...</div>
+
+  <nav class="navbar">
+    <h3 class="logo">Discover Tripura</h3>
+    <ul>
+      <li><a href="https://tripuratourism.gov.in/index.php">Home</a></li>
+      <li><a href="https://tripuratourism.gov.in/destination.php">Destinations</a></li>
+      <li><a href="https://tripuratourism.gov.in/culturalHeritage.php">Culture</a></li>
+    </ul>
+    <button class="dark-toggle" onclick="toggleDark()">Dark Mode</button>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Tripura</h1>
+      <p>A land known for its handicraft, wood carvings, and bamboo products.</p>
+      <button class="explore-btn" onclick="document.querySelector('#places').scrollIntoView({behavior:'smooth'})">Explore More</button>
+    </div>
+  </section>
+
+  <h2 class="section-title">POPULAR  DESTINATIONS</h2>
+  
+  <div class="swiper" id="places">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" style="background-image:url('https://tripuratourism.gov.in/images/tour/1661754729/35.jpg')"></div>
+      <div class="swiper-slide" style="background-image:url('https://www.tourmyindia.com/socialimg/tripura-touris.jpg')"></div>
+      <div class="swiper-slide" style="background-image:url('https://hblimg.mmtcdn.com/content/hubble/img/states_img/mmt/activities/m_Tripura_landscape_1_l_667_1000.jpg')"></div>
+       <div class="swiper-slide" style="background-image:url('https://i.pinimg.com/736x/1e/7a/54/1e7a547dad5d817b880e967a375557e4.jpg')"></div>
+       <div class="swiper-slide" style="background-image:url('https://knowledgeofindia.com/wp-content/uploads/2020/02/Boat-Ride-On-A-Trip-To-Chabimura-In-Tripura.jpg')"></div>
+       <div class="swiper-slide" style="background-image:url('https://www.taleof2backpackers.com/wp-content/uploads/2019/12/Devi-Chakrama-image_Tripura.jpg')"></div>
+       <div class="swiper-slide" style="background-image:url('https://static2.tripoto.com/media/filter/tst/img/406465/SpotDocument/1564726802_1564726794468.jpg.webp')"></div>
+       <div class="swiper-slide" style="background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/durgabari-tea-garden-agartala-tripura-2-attr-hero?qlt=82&ts=1726651032120')"></div>
+        <div class="swiper-slide" style="background-image:url('https://curlytales.com/wp-content/uploads/2023/01/montang-2.jpg')"></div>
+         <div class="swiper-slide" style="background-image:url('https://tripxl.com/blog/wp-content/uploads/2025/10/Sanaiya-Waterfall.jpg')"></div>
+          <div class="swiper-slide" style="background-image:url('https://knowledgeofindia.com/wp-content/uploads/2020/02/Mandir-Ghat-The-Starting-Point-Of-Damboor-Lake-Boat-Ride.jpg')"></div>
+          <div class="swiper-slide" style="background-image:url('https://media.assettype.com/indiawaterportal%2F2025-10-10%2Ftypw2hw6%2FDumboor-island-1.jpg?rect=0%2C48%2C1280%2C672&w=1200&ar=40%3A21&auto=format%2Ccompress&ogImage=true&mode=crop&enlarge=true&overlay=false&overlay_position=bottom&overlay_width=100')"></div>
+          <div class="swiper-slide" style="background-image:url('https://tripxl.com/blog/wp-content/uploads/2025/10/Bangfai-Waterfall.jpg')"></div>
+          <div class="swiper-slide" style="background-image:url('https://cdn.tripuntold.com/media/photos/location/2019/02/11/dc16064c-bdfc-4d2c-b318-09b8e5d208d2.jpg')"></div>
+          <div class="swiper-slide" style="background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/sepahijala-wildlife-sanctuary-agartala-tripura-3-attr-hero?qlt=82&ts=1726650971869')"></div>
+
+    </div>
+  </div>
+
+
+
+
+
+<!-- Attractions Section -->
+<h2 class="section-title" >ATTRACTIONS</h2>
+<p class="p">__WORTH A THOUSAND STORIES__</p>
+<div class="attractions-wrap" style="white-space: nowrap; overflow-x: auto; padding: 20px 5%; gap: 20px; display: flex; scroll-behavior: smooth;">
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://s7ap1.scene7.com/is/image/incredibleindia/durgabari-tea-garden-agartala-tripura-2-attr-hero?qlt=82&ts=1726651032120" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>DURGABARI TEA GARDEN</h3>
+<p style="opacity:1;">A prominent symbol of Tripura's tea industry.</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://www.incredibleindia.gov.in/en/tripura/agartala/durgabari-tea-estate"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://www.tourmyindia.com/socialimg/tripura-touris.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>UJJAYANTA  PALACE</h3>
+<p style="opacity:1;">It now serves as the State Museum.</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://www.incredibleindia.gov.in/en/tripura/agartala/ujjayanta-palace" " style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1661767990/176.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>SEPAHIJALA </h3>
+<p style="opacity:1;">Wildlife sanctuary famous for clouded leopard enclosures</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://www.incredibleindia.gov.in/en/tripura/agartala/sepahijala-wildlife-sanctuary"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://i.pinimg.com/736x/1e/7a/54/1e7a547dad5d817b880e967a375557e4.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>JAMPUI HILLS</h3>
+<p style="opacity:1;"> Tripura's highest hill range</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=7"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripxl.com/blog/wp-content/uploads/2025/10/Bangfai-Waterfall.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>DUMBOOR WATERFALLS</h3>
+<p style="opacity:1;">Formed by the meeting of Raima and Sarma rivers.</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=50"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://curlytales.com/wp-content/uploads/2023/01/montang-2.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>MONTANG VALLEY</h3>
+<p style="opacity:1;"> Floating clouds and scenic beauty..</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://mindtrip.ai/attraction/tripura/montang-valley/at-8lKpg89p"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://hblimg.mmtcdn.com/content/hubble/img/states_img/mmt/activities/m_Tripura_landscape_1_l_667_1000.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>BHUVANESWARI TEMPLE</h3>
+<p style="opacity:1;">Built by Maharaja Govinda Manikya.</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=42"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1661759345/80.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>NEERMAHAL</h3>
+<p style="opacity:1;">A former royal palace of Tripura Kingdom.</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1661766829/20.png" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>GEDU MIA MASJID</h3>
+<p style="opacity:1;">The largest Mosque in Tripura</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=14"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1661769740/2.png" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>MAHAMUNI PEGODA</h3>
+<p style="opacity:1;">The Buddhist Shrine of repute and veneration</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=25"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 320px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://imgmediagumlet.lbb.in/media/2020/12/5fe9cae7b9321a370f98ee10_1609157351739.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3>TRISHNA WILDLIFE SANCTUARY</h3>
+<p style="opacity:1;"> Wildlife sanctuary famous for bison</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=25"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1661754729/35.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">UNAKOTI</h3>
+<p style="opacity:1;">Beautiful rock cut carvings and stone images </p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=3"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1661773484/35.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">SANAIYA WATERFALLS</h3>
+<p style="opacity:1;text-align:center;">Scothing natural beauty </p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=33"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://mountainecho.in/wp-content/uploads/2023/10/cropped-Bamboo-Paradise_Bash-Gram_Tripura.webp" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">BASHGRAM</h3>
+<p style="opacity:1;">Unique bamboo resort and eco-tourism destination </p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=54"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://cdn.tripuntold.com/media/photos/location/2019/02/11/d4555d26-9894-4d58-8a16-3455844ba093.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">BARAMURA ECOPARK</h3>
+<p style="opacity:1;">Breathtakingly beautiful expanse of rolling hills of Baramura </p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=5"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://images.travelandleisureasia.com/wp-content/uploads/sites/2/2023/12/13174815/butterfly-Park-Goa-2-1024x991.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">BUTTERFLY PARK</h3>
+<p style="opacity:1;">Currently many species of butterflies in the park </p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=51"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://tripuratourism.gov.in/images/tour/1708077639/101.jpg" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">OLD RAJBARI PALACE</h3>
+<p style="opacity:1;">A significant historical edifice located in Udaipur, Tripura</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=61"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+<div class="attraction-card" onclick="zoomCard(this)" style="min-width: 280px; background: #ccc; opacity: 0.75; border-radius: 18px; overflow: hidden; display: inline-block;">
+<img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/f1/b3/73/tripura-sundari-temple.jpg?w=600&h=400&s=1" style="width:100%; height:180px; object-fit:cover;" />
+<div style="padding:15px;">
+<h3 style="text-align: center;">TRIPURA SUNDARI TEMPLE</h3>
+<p style="opacity:1;"> Venerated attraction of Tripura</p>
+<button style="margin-top:10px; margin-left:80px ;padding:8px 15px; background:#00a86b; color:white; border:none; border-radius:6px; cursor:pointer;text-align: center;">
+    <a href="https://tripuratourism.gov.in/single-tour.php?id=2"  style="color:white; text-decoration:none;">
+    Explore
+  </a></button>
+</div>
+</div>
+
+
+
+
+</div>
+
+
+<script>
+
+const attrWrap = document.querySelector('.attractions-wrap');
+let scrollAmount = 0;
+setInterval(() => {
+scrollAmount += 1;
+attrWrap.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+if (scrollAmount >= attrWrap.scrollWidth - attrWrap.clientWidth) scrollAmount = 0;
+}, 30);
+function zoomCard(card) {
+  card.classList.toggle("zoomed");
+}
+
+
+</script>
+
+<!--explore section-->
+
+  <h2 class="section-title" id="cult">EXPLORE EXPERIENCES</h2>
+<p class="p">___IN TRIPURA___</p>
+
+<p class="text">
+  Tripura's culture is a vibrant mix of Bengali and diverse indigenous tribal traditions, 
+  characterized by rich folk dances (Garia, Bizu, Hojagiri), music, and festivals like Kharchi 
+  and Garia Puja. The state is known for its cane, bamboo, and handicrafts, making it a beautiful 
+  blend of many cultural threads.
+</p>
+
+<section>
+
+<!-- HORIZONTAL SCROLL WRAPPER -->
+<div class="explore-wrap" 
+     style="white-space: nowrap; overflow-x: auto; padding: 20px 5%; gap: 20px; 
+            display: flex; scroll-behavior: smooth;">
+
+  <!-- CARD 1 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+    
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Hojagiri_dance.jpg/640px-Hojagiri_dance.jpg" 
+         style="width:100%; height:180px; object-fit:cover;" />
+    
+    <div style="padding:15px;">
+      <h3 class="h3">HOJAGIRI DANCE</h3>
+      <p style="text-align: center;">Known for its incredible balance</p>
+
+      <a href="https://tripura.gov.in/folk-dances" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+
+  <!-- CARD 2 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+
+    <img src="https://5.imimg.com/data5/SW/CR/GLADMIN-51568465/odissi-dance-500x500.jpg" 
+         style="width:100%; height:180px; object-fit:cover;" />
+
+    <div style="padding:15px;">
+      <h3 class="h3">RABINDRA NRITYA</h3>
+      <p style="text-align: center;">A graceful ,fluid Bengali dance </p>
+
+      <a href="https://indiaartreview.com/stories/rabindra-nritya-emotion-melodies-poetry/" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+
+  <!-- CARD 3 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+
+    <img src="https://images.slurrp.com/prod/articles/gxe0i8wegl9.webp" 
+         style="width:100%; height:180px; object-fit:cover;" />
+
+    <div style="padding:15px;">
+      <h3 class="h3">TRIBAL FOOD</h3>
+      <p  style="text-align:center;"> Known locally as Mui Borok</p>
+
+      <a href="https://tripuratourism.gov.in/food.php" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+
+  <!-- CARD 4 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+
+    <img src="https://www.awesomecuisine.com/wp-content/uploads/2024/02/Bengali-Cuisine.jpg" 
+         style="width:100%; height:180px; object-fit:cover;" />
+
+    <div style="padding:15px;">
+      <h3 class="h3">BENGALI CUISINE</h3>
+      <p style="text-align:center;">Famous for its unique spices</p>
+
+      <a href="https://neramac.com/cuisine-of-tripura" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+ <!-- CARD 5 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+
+    <img src="https://ttdcl.tripura.cloud/images/tour/1661774185/81.jpg" 
+         style="width:100%; height:180px; object-fit:cover;" />
+
+    <div style="padding:15px;">
+      <h3 class="h3">PURBASHA HANDICRAFTS</h3>
+      <p>Handicraft products of bamboo and cane</p>
+
+      <a href="https://neramac.com/cuisine-of-tripura" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+
+
+  <!-- CARD 6 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+
+    <img src="https://www.neramac.com/assets/images/shut-1622454318-502x377.jpg" 
+         style="width:100%; height:180px; object-fit:cover;" />
+
+    <div style="padding:15px;">
+      <h3 class="h3">PINEAPPLE FARMING</h3>
+      <p>Focusing mainly on the popular Queen and Kew </p>
+
+      <a href="https://www.neramac.com/gi-products/queen-pineapple" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+
+
+   <!-- CARD 7 -->
+  <div class="explore-card" 
+       style="min-width: 310px; background:#ccc; opacity:0.75; border-radius:50px; 
+              overflow:hidden; display:inline-block;">
+
+    <img src="https://asiainch.org/wp-content/uploads/2023/02/6.jpg" 
+         style="width:100%; height:180px; object-fit:cover;" />
+
+    <div style="padding:15px;">
+      <h3 class="h3">HANDLOOM CLOTHES</h3>
+      <p>Vibrant colors, geometric patterns, and unique tribal designs, primarily featuring the Risa  and Rignai  </p>
+
+      <a href="https://www.dsource.in/resource/traditional-saree-weaving-agartala-tripura/introduction" 
+         style="display:inline-block; margin-top:10px; margin-left:90px;
+                padding:8px 15px; background:#00a86b; color:white;
+                border-radius:6px; text-decoration:none; font-size:14px;">
+        Explore
+      </a>
+    </div>
+  </div>
+
+
+
+
+</div>
+</section>
+
+
+<!-- JS FOR UPWARD LIFT + AUTO SLIDE -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const wrap = document.querySelector('.explore-wrap');
+  const cards = [...document.querySelectorAll('.explore-card')];
+
+  if (!wrap) {
+    console.error("ERROR: .explore-wrap not found");
+    return;
+  }
+
+  /* -------------------------
+      AUTO SLIDING
+  --------------------------*/
+  let scrollX = 0;
+  setInterval(() => {
+    scrollX += 1;
+    wrap.scrollLeft = scrollX;
+    if (scrollX >= wrap.scrollWidth - wrap.clientWidth) {
+      scrollX = 0;
+    }
+  }, 30);
+
+  /* -------------------------
+      CARD UPWARD LIFT
+  --------------------------*/
+  cards.forEach(card => {
+    card.addEventListener('click', (e) => {
+
+      // Do NOT lift card when clicking Explore link
+      if (e.target.tagName === 'A') return;
+
+      // If THIS card is already lifted, drop it back
+      if (card.classList.contains('upward')) {
+        card.classList.remove('upward');
+        return; // stop here
+      }
+
+      // Otherwise lift this card & drop all others
+      cards.forEach(c => c.classList.remove('upward'));
+      card.classList.add('upward');
+    });
+  });
+});
+</script>
+
+
+<style>
+/* upward movement class */
+.explore-card.upward {
+  transform: translateY(-25px);
+  transition: transform .3s ease;
+}
+.explore-card {
+  transition: transform .3s ease;
+}
+</style>
+
+
+  <footer>
+   © Ministry of Tourism, Government of India.
+  </footer>
+
+  <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <!-- SWIPER SCRIPT -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <script>
+    // PRELOADER
+    window.onload = () => {
+      document.getElementById('preloader').style.display = 'none';
+    }
+
+    // SWIPER
+    const swiper = new Swiper('.swiper', {
+      loop: true,
+      autoplay: { delay: 2500 },
+    });
+
+    // DARK MODE
+    function toggleDark(){ document.body.classList.toggle('dark'); }
+
+    // SCROLL TOP BUTTON
+    window.addEventListener('scroll', () => {
+      document.getElementById('topBtn').style.display = window.scrollY > 300 ? 'block' : 'none';
+    });
+
+    // GSAP ANIMATIONS
+    gsap.from('.hero-content', { y: 40, opacity: 0, duration: 1.5 });
+    gsap.from('.section-title', {
+      scrollTrigger: '.section-title',
+      y: 50,
+      opacity: 0,
+      duration: 1
+    });
+  </script>
+  
+
+
+
+</body>
+</html>
